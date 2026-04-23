@@ -88,10 +88,10 @@ class User:
 
     def __init__(self, client: Client, data: dict) -> None:
         self._client = client
-        legacy = data['legacy']
+        legacy = data.get('legacy', {})
         core = data.get('core', {})
 
-        self.id: str = data['rest_id']
+        self.id: str = data.get('rest_id', '')
         self.created_at: str = core.get('created_at', legacy.get('created_at', ''))
         self.name: str = core.get('name', legacy.get('name', ''))
         self.screen_name: str = core.get('screen_name', legacy.get('screen_name', ''))
@@ -101,28 +101,28 @@ class User:
         self.location: str = legacy.get('location', '')
         self.description: str = legacy.get('description', '')
         self.description_urls: list = legacy.get('entities', {}).get('description', {}).get('urls', [])
-        self.urls: list = legacy['entities'].get('url', {}).get('urls')
+        self.urls: list = legacy.get('entities', {}).get('url', {}).get('urls', [])
         self.pinned_tweet_ids: list[str] = legacy.get('pinned_tweet_ids_str', [])
-        self.is_blue_verified: bool = data['is_blue_verified']
+        self.is_blue_verified: bool = data.get('is_blue_verified', False)
         self.verified: bool = legacy.get('verified', False)
         self.possibly_sensitive: bool = legacy.get('possibly_sensitive', False)
         self.can_dm: bool = legacy.get('can_dm', data.get('dm_permissions', {}).get('can_dm', False))
         self.can_media_tag: bool = legacy.get('can_media_tag', data.get('media_permissions', {}).get('can_media_tag', False))
-        self.want_retweets: bool = legacy['want_retweets']
-        self.default_profile: bool = legacy['default_profile']
-        self.default_profile_image: bool = legacy['default_profile_image']
-        self.has_custom_timelines: bool = legacy['has_custom_timelines']
-        self.followers_count: int = legacy['followers_count']
-        self.fast_followers_count: int = legacy['fast_followers_count']
-        self.normal_followers_count: int = legacy['normal_followers_count']
-        self.following_count: int = legacy['friends_count']
-        self.favourites_count: int = legacy['favourites_count']
-        self.listed_count: int = legacy['listed_count']
-        self.media_count = legacy['media_count']
-        self.statuses_count: int = legacy['statuses_count']
-        self.is_translator: bool = legacy['is_translator']
-        self.translator_type: str = legacy['translator_type']
-        self.withheld_in_countries: list[str] = legacy['withheld_in_countries']
+        self.want_retweets: bool = legacy.get('want_retweets', False)
+        self.default_profile: bool = legacy.get('default_profile', False)
+        self.default_profile_image: bool = legacy.get('default_profile_image', False)
+        self.has_custom_timelines: bool = legacy.get('has_custom_timelines', False)
+        self.followers_count: int = legacy.get('followers_count', 0)
+        self.fast_followers_count: int = legacy.get('fast_followers_count', 0)
+        self.normal_followers_count: int = legacy.get('normal_followers_count', 0)
+        self.following_count: int = legacy.get('friends_count', 0)
+        self.favourites_count: int = legacy.get('favourites_count', 0)
+        self.listed_count: int = legacy.get('listed_count', 0)
+        self.media_count = legacy.get('media_count', 0)
+        self.statuses_count: int = legacy.get('statuses_count', 0)
+        self.is_translator: bool = legacy.get('is_translator', False)
+        self.translator_type: str = legacy.get('translator_type', '')
+        self.withheld_in_countries: list[str] = legacy.get('withheld_in_countries', [])
         self.protected: bool = legacy.get('protected', False)
 
     @property
