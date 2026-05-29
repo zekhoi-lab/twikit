@@ -161,10 +161,14 @@ class Client:
         if isinstance(response_data, dict) and "errors" in response_data:
             error_code = response_data["errors"][0].get("code")
             error_message = response_data["errors"][0].get("message")
-            if error_code in (37, 64):
+            if error_code == 64:
                 # Account suspended
                 raise AccountSuspended(error_message)
-
+            if error_code == 37:
+                raise Unauthorized(
+                    error_message, headers=response.headers
+                )
+            
             if error_code == 326:
                 # Account unlocking
                 if self.captcha_solver is None:
@@ -499,12 +503,13 @@ class Client:
                 headers=headers,
             )
 
-        await flow.execute_task(
-            {
-                "subtask_id": "AccountDuplicationCheck",
-                "check_logged_in_account": {"link": "AccountDuplicationCheck_false"},
-            },
-        )
+        if flow.task_id == "AccountDuplicationCheck":
+            await flow.execute_task(
+                {
+                    "subtask_id": "AccountDuplicationCheck",
+                    "check_logged_in_account": {"link": "AccountDuplicationCheck_false"},
+                },
+            )
 
         if cookies_file:
             self.save_cookies(cookies_file)
